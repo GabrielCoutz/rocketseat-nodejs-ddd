@@ -1,7 +1,6 @@
+import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
+import type { IAnswersRepository } from '@/domain/forum/application/repositories/answers-repository.js'
 import { Answer } from '@/domain/forum/enterprise/entities/answer.js'
-import { UniqueEntityId } from '../../core/entities/unique-entity-id.js'
-
-import type { IAnswersRepository } from '../forum/application/repositories/answers-repository.js'
 
 interface IAnswerQuestionUseCaseProps {
   instructorId: string
