@@ -1,7 +1,6 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { GetQuestionBySlugUseCase } from '@/domain/forum/application/use-cases/get-question-by-slug.js'
-import { Question } from '@/domain/forum/enterprise/entities/question.js'
 import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug.js'
+import { makeQuestion } from 'test/factories/make-question.js'
 
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository.js'
 
@@ -15,17 +14,14 @@ describe('Get question by slug', () => {
   })
 
   it('should be able to get question by slug', async () => {
-    const newQuestion = Question.create({
-      authorId: new UniqueEntityId('author-1'),
-      title: 'How to create a question?',
-      content: 'This is the content of the question.',
-      slug: Slug.create('how-to-create-a-question'),
+    const newQuestion = makeQuestion({
+      slug: Slug.create('example-question'),
     })
 
     await mockAnswerQuestionRepository.create(newQuestion)
 
     const { question } = await sut.execute({
-      slug: 'how-to-create-a-question',
+      slug: 'example-question',
     })
 
     expect(question.content).toBe('This is the content of the question.')

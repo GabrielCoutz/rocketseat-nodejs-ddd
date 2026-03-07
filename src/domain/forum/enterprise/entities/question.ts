@@ -4,7 +4,7 @@ import type { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug.js'
 import dayjs from 'dayjs'
 
-interface IQuestionProps {
+export interface IQuestionProps {
   title: string
   content: string
   slug: Slug
