@@ -2,7 +2,7 @@ import type { Optional } from '@/core/@types/optional.js'
 import { Entity } from '@/core/entities/entity.js'
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 
-interface IAnswerProps {
+export interface IAnswerProps {
   content: string
   createdAt: Date
   updatedAt?: Date
