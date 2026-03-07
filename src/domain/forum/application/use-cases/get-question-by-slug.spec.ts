@@ -24,7 +24,7 @@ describe('Get question by slug', () => {
       slug: 'example-question',
     })
 
-    expect(question.content).toBe('This is the content of the question.')
+    expect(question.content).toBe(newQuestion.content)
     expect(newQuestion.id).toBe(question.id)
   })
 })
