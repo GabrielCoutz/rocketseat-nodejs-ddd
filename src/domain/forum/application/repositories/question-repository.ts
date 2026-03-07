@@ -1,3 +1,4 @@
+import type { IPaginationParams } from '@/core/repositories/pagination-params.js'
 import type { Question } from '@/domain/forum/enterprise/entities/question.js'
 
 export interface IQuestionsRepository {
@@ -6,4 +7,5 @@ export interface IQuestionsRepository {
   findById(id: string): Promise<Question | null>
   delete(question: Question): Promise<void>
   save(question: Question): Promise<void>
+  findManyRecent({ page }: IPaginationParams): Promise<Question[]>
 }

@@ -35,4 +35,12 @@ export class InMemoryQuestionsRepository implements IQuestionsRepository {
 
     if (index !== -1) this.items[index] = question
   }
+
+  async findManyRecent({ page }: { page: number }): Promise<Question[]> {
+    const items = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * 20, page * 20)
+
+    return items
+  }
 }

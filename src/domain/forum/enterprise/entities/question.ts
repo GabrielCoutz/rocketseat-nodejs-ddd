@@ -21,9 +21,9 @@ export class Question extends Entity<IQuestionProps> {
   ) {
     const question = new Question(
       {
-        ...props,
         createdAt: new Date(),
         slug: props.slug ?? Slug.createFromText(props.title),
+        ...props,
       },
       id,
     )

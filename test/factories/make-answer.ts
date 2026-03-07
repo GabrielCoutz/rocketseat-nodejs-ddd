@@ -5,16 +5,19 @@ import {
 } from '@/domain/forum/enterprise/entities/answer.js'
 import { faker } from '@faker-js/faker'
 
-export const makeAnswer = (
+export function makeAnswer(
   override: Partial<IAnswerProps> = {},
   id?: UniqueEntityId,
-): Answer =>
-  Answer.create(
+) {
+  const answer = Answer.create(
     {
       authorId: new UniqueEntityId(),
       questionId: new UniqueEntityId(),
-      content: faker.lorem.paragraphs(),
+      content: faker.lorem.text(),
       ...override,
     },
     id,
   )
+
+  return answer
+}

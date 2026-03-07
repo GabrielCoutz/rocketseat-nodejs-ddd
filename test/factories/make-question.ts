@@ -3,20 +3,22 @@ import {
   Question,
   type IQuestionProps,
 } from '@/domain/forum/enterprise/entities/question.js'
-import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug.js'
+
 import { faker } from '@faker-js/faker'
 
-export const makeQuestion = (
+export function makeQuestion(
   override: Partial<IQuestionProps> = {},
   id?: UniqueEntityId,
-): Question =>
-  Question.create(
+) {
+  const question = Question.create(
     {
       authorId: new UniqueEntityId(),
       title: faker.lorem.sentence(),
-      content: faker.lorem.paragraph(),
-      slug: Slug.create(faker.lorem.slug()),
+      content: faker.lorem.text(),
       ...override,
     },
     id,
   )
+
+  return question
+}
