@@ -67,11 +67,9 @@ export class Question extends Entity<IQuestionProps> {
   }
 
   set bestAnswerId(bestAnswerId: UniqueEntityId | undefined) {
-    if (bestAnswerId === undefined) {
-      delete this.props.bestAnswerId
-    } else {
-      this.props.bestAnswerId = bestAnswerId
-    }
+    if (bestAnswerId === undefined) delete this.props.bestAnswerId
+    else this.props.bestAnswerId = bestAnswerId
+
     this.touch()
   }
 
