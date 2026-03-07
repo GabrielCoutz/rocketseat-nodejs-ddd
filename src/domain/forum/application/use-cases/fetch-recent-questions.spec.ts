@@ -12,7 +12,7 @@ describe('Fetch Recent Questions', () => {
   })
 
   it('should be able to fetch recent questions', async () => {
-    for (let i = 1; i <= 22; i++)
+    for (let i = 1; i <= 3; i++)
       await mockCreatesRepository.create(
         makeQuestion({
           createdAt: new Date(2020, 0, i),
@@ -21,8 +21,20 @@ describe('Fetch Recent Questions', () => {
 
     const { questions } = await sut.execute({ page: 1 })
 
-    expect(questions).toHaveLength(20)
-    expect(questions[0]!.createdAt).toEqual(new Date(2020, 0, 22))
-    expect(questions[1]!.createdAt).toEqual(new Date(2020, 0, 21))
+    expect(questions[0]!.createdAt).toEqual(new Date(2020, 0, 3))
+    expect(questions[1]!.createdAt).toEqual(new Date(2020, 0, 2))
+  })
+
+  it('should be able to fetch paginated recent questions', async () => {
+    for (let i = 1; i <= 22; i++)
+      await mockCreatesRepository.create(
+        makeQuestion({
+          createdAt: new Date(2020, 0, i),
+        }),
+      )
+
+    const { questions } = await sut.execute({ page: 2 })
+
+    expect(questions).toHaveLength(2)
   })
 })
