@@ -1,19 +1,23 @@
-import { AnswerQuestionUseCase } from './answer-question.js'
-import type { IAnswersRepository } from '../repositories/answers-repository.js'
+import { AnswerQuestionUseCase } from '@/domain/forum/application/use-cases/answer-question.js'
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository.js'
 
-const mockAnswersRepository: IAnswersRepository = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create: async (answer) => {},
-}
+let mockAnswerQuestionRepository: InMemoryAnswersRepository
+let sut: AnswerQuestionUseCase
 
-test('answer question', async () => {
-  const answerQuestion = new AnswerQuestionUseCase(mockAnswersRepository)
-
-  const answer = await answerQuestion.execute({
-    instructorId: 'instructor-1',
-    questionId: 'question-1',
-    content: 'This is the answer to the question.',
+describe('Create Answer', () => {
+  beforeEach(() => {
+    mockAnswerQuestionRepository = new InMemoryAnswersRepository()
+    sut = new AnswerQuestionUseCase(mockAnswerQuestionRepository)
   })
 
-  expect(answer.content).toBe('This is the answer to the question.')
+  it('should be able tocreate answer', async () => {
+    const { answer } = await sut.execute({
+      instructorId: 'instructor-1',
+      questionId: 'question-1',
+      content: 'This is the create to the answer.',
+    })
+
+    expect(answer.content).toBe('This is the create to the answer.')
+    expect(mockAnswerQuestionRepository.items[0]?.id).toBe(answer.id)
+  })
 })
