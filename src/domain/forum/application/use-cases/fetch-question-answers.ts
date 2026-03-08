@@ -1,3 +1,4 @@
+import { right, type Either } from '@/core/either.js'
 import type { IAnswersRepository } from '@/domain/forum/application/repositories/answers-repository.js'
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.js'
 
@@ -6,9 +7,12 @@ interface IFetchQuestionAnswersCaseProps {
   questionId: string
 }
 
-interface IFetchQuestionAnswersCaseResponse {
-  answers: Answer[]
-}
+type IFetchQuestionAnswersCaseResponse = Either<
+  null,
+  {
+    answers: Answer[]
+  }
+>
 
 export class FetchQuestionAnswersCase {
   constructor(private answersRepository: IAnswersRepository) {}
@@ -24,8 +28,8 @@ export class FetchQuestionAnswersCase {
       },
     )
 
-    return {
+    return right({
       answers,
-    }
+    })
   }
 }

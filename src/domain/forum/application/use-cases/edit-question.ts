@@ -1,4 +1,7 @@
+import { left, right, type Either } from '@/core/either.js'
 import type { IQuestionsRepository } from '@/domain/forum/application/repositories/question-repository.js'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error.js'
 import type {
   IQuestionProps,
   Question,
@@ -12,9 +15,12 @@ interface IEditQuestionUseCaseProps extends Pick<
   authorId: string
 }
 
-interface IEditQuestionUseCaseResponse {
-  question: Question
-}
+type IEditQuestionUseCaseResponse = Either<
+  NotAllowedError | ResourceNotFoundError,
+  {
+    question: Question
+  }
+>
 
 export class EditQuestionUseCase {
   constructor(private questionsRepository: IQuestionsRepository) {}
@@ -27,15 +33,15 @@ export class EditQuestionUseCase {
   }: IEditQuestionUseCaseProps): Promise<IEditQuestionUseCaseResponse> {
     const question = await this.questionsRepository.findById(questionId)
 
-    if (!question) throw new Error('Question not found')
+    if (!question) return left(new ResourceNotFoundError())
     if (question.authorId.toString() !== authorId)
-      throw new Error('You are not the author of this question')
+      return left(new NotAllowedError())
 
     question.title = title
     question.content = content
 
     await this.questionsRepository.save(question)
 
-    return { question }
+    return right({ question })
   }
 }

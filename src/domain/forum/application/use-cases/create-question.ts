@@ -1,3 +1,4 @@
+import { right, type Either } from '@/core/either.js'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import type { IQuestionsRepository } from '@/domain/forum/application/repositories/question-repository.js'
 import { Question } from '@/domain/forum/enterprise/entities/question.js'
@@ -8,9 +9,12 @@ interface ICreateQuestionUseCaseProps {
   content: string
 }
 
-interface ICreateQuestionUseCaseResponse {
-  question: Question
-}
+type ICreateQuestionUseCaseResponse = Either<
+  null,
+  {
+    question: Question
+  }
+>
 
 export class CreateQuestionUseCase {
   constructor(private questionsRepository: IQuestionsRepository) {}
@@ -28,6 +32,6 @@ export class CreateQuestionUseCase {
 
     await this.questionsRepository.create(question)
 
-    return { question }
+    return right({ question })
   }
 }

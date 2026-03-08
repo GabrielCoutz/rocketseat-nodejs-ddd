@@ -1,4 +1,7 @@
+import { left, right, type Either } from '@/core/either.js'
 import type { IAnswersRepository } from '@/domain/forum/application/repositories/answers-repository.js'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error.js'
 import type { Answer } from '@/domain/forum/enterprise/entities/answer.js'
 
 interface IEditAnswerUseCaseProps extends Pick<Answer, 'content'> {
@@ -6,9 +9,12 @@ interface IEditAnswerUseCaseProps extends Pick<Answer, 'content'> {
   authorId: string
 }
 
-interface IEditAnswerUseCaseResponse {
-  answer: Answer
-}
+type IEditAnswerUseCaseResponse = Either<
+  NotAllowedError | ResourceNotFoundError,
+  {
+    answer: Answer
+  }
+>
 
 export class EditAnswerUseCase {
   constructor(private answersRepository: IAnswersRepository) {}
@@ -20,14 +26,14 @@ export class EditAnswerUseCase {
   }: IEditAnswerUseCaseProps): Promise<IEditAnswerUseCaseResponse> {
     const answer = await this.answersRepository.findById(answerId)
 
-    if (!answer) throw new Error('Answer not found')
+    if (!answer) return left(new ResourceNotFoundError())
     if (answer.authorId.toString() !== authorId)
-      throw new Error('You are not the author of this answer')
+      return left(new NotAllowedError())
 
     answer.content = content
 
     await this.answersRepository.save(answer)
 
-    return { answer }
+    return right({ answer })
   }
 }
