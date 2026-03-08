@@ -20,11 +20,15 @@ describe('Get question by slug', () => {
 
     await mockAnswerQuestionRepository.create(newQuestion)
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       slug: 'example-question',
     })
 
-    expect(question.content).toBe(newQuestion.content)
-    expect(newQuestion.id).toBe(question.id)
+    expect(result.isRight()).toBe(true)
+
+    if (result.isRight()) {
+      expect(result.value.question.content).toBe(newQuestion.content)
+      expect(result.value.question.id).toBe(newQuestion.id)
+    }
   })
 })

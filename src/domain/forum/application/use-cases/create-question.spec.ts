@@ -1,4 +1,3 @@
-import type { IQuestionsRepository } from '@/domain/forum/application/repositories/question-repository.js'
 import { CreateQuestionUseCase } from '@/domain/forum/application/use-cases/create-question.js'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository.js'
 
@@ -12,13 +11,24 @@ describe('Create Question', () => {
   })
 
   it('should be able to create question', async () => {
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       authorId: 'author-1',
       title: 'This is the question title.',
       content: 'This is the create to the question.',
+      attachmentsIds: ['attachment-1', 'attachment-2'],
     })
 
-    expect(question.content).toBe('This is the create to the question.')
-    expect(mockCreatesRepository.items[0]?.id).toBe(question.id)
+    expect(result.isRight()).toBe(true)
+    expect(mockCreatesRepository.items[0]).toEqual(result.value?.question)
+    expect(mockCreatesRepository.items[0].attachments).toEqual([
+      expect.objectContaining({
+        attachmentId: 'attachment-1',
+        questionId: result.value?.question.id.toString(),
+      }),
+      expect.objectContaining({
+        attachmentId: 'attachment-2',
+        questionId: result.value?.question.id.toString(),
+      }),
+    ])
   })
 })

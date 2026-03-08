@@ -1,5 +1,6 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { EditAnswerUseCase } from '@/domain/forum/application/use-cases/edit-answer.js'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
 
 import { makeAnswer } from 'test/factories/make-answer.js'
 
@@ -40,12 +41,13 @@ describe('Edit answer', () => {
 
     await mockAnswersRepository.create(newAnswer)
 
-    await expect(() =>
-      sut.execute({
-        answerId: 'answer-1',
-        authorId: 'author-2',
-        content: 'New content',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerId: newAnswer.id.toString(),
+      authorId: 'author-2',
+      content: 'Conteúdo teste',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

@@ -9,7 +9,7 @@ export class Entity<T> {
     this.props = props
   }
 
-  get id(): string {
-    return this._id.value
+  get id(): UniqueEntityId {
+    return this._id
   }
 }

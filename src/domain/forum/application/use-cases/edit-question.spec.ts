@@ -1,5 +1,6 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { EditQuestionUseCase } from '@/domain/forum/application/use-cases/edit-question.js'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
 
 import { makeQuestion } from 'test/factories/make-question.js'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-question-repository.js'
@@ -41,13 +42,14 @@ describe('Delete question', () => {
 
     await mockQuestionRepository.create(newQuestion)
 
-    await expect(() =>
-      sut.execute({
-        questionId: 'question-1',
-        authorId: 'author-2',
-        content: 'New content',
-        title: 'New title',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      questionId: newQuestion.id.toString(),
+      authorId: 'author-2',
+      title: 'Pergunta teste',
+      content: 'Conteúdo teste',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

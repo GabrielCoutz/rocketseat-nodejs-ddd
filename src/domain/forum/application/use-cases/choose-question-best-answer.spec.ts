@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { ChooseQuestionBestAnswerUseCase } from '@/domain/forum/application/use-cases/choose-question-best-answer.js'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
 import { makeAnswer } from 'test/factories/make-answer.js'
 import { makeQuestion } from 'test/factories/make-question.js'
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository.js'
@@ -54,11 +55,12 @@ describe('Choose Question Best Answer', () => {
     await inMemoryQuestionsRepository.create(question)
     await inMemoryAnswersRepository.create(answer)
 
-    expect(() => {
-      return sut.execute({
-        answerId: answer.id.toString(),
-        authorId: 'author-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerId: answer.id.toString(),
+      authorId: 'author-2',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

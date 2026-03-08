@@ -11,13 +11,13 @@ describe('Create Answer', () => {
   })
 
   it('should be able tocreate answer', async () => {
-    const { answer } = await sut.execute({
+    const result = await sut.execute({
       instructorId: 'instructor-1',
       questionId: 'question-1',
       content: 'This is the create to the answer.',
     })
 
-    expect(answer.content).toBe('This is the create to the answer.')
-    expect(mockAnswerQuestionRepository.items[0]?.id).toBe(answer.id)
+    expect(result.isRight()).toBe(true)
+    expect(mockAnswerQuestionRepository.items[0]).toEqual(result.value?.answer)
   })
 })
