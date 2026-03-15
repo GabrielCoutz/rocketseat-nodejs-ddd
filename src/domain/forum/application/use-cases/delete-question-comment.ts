@@ -1,7 +1,7 @@
-import { left, right, type Either } from '@/core/either.js'
-import type { IQuestionCommentsRepository } from '@/domain/forum/application/repositories/question-comments-repository.js'
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error.js'
+import { Either, left, right } from '@/core/either'
+import { QuestionCommentsRepository } from '@/domain/forum/application/repositories/question-comments-repository'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error'
 
 interface DeleteQuestionCommentUseCaseRequest {
   authorId: string
@@ -10,28 +10,30 @@ interface DeleteQuestionCommentUseCaseRequest {
 
 type DeleteQuestionCommentUseCaseResponse = Either<
   ResourceNotFoundError | NotAllowedError,
-  null
+  {}
 >
 
 export class DeleteQuestionCommentUseCase {
-  constructor(
-    private questionCommentsRepository: IQuestionCommentsRepository,
-  ) {}
+  constructor(private questionCommentsRepository: QuestionCommentsRepository) {}
 
   async execute({
     authorId,
     questionCommentId,
   }: DeleteQuestionCommentUseCaseRequest): Promise<DeleteQuestionCommentUseCaseResponse> {
-    const questionComment =
-      await this.questionCommentsRepository.findById(questionCommentId)
+    const questionComment = await this.questionCommentsRepository.findById(
+      questionCommentId,
+    )
 
-    if (!questionComment) return left(new ResourceNotFoundError())
+    if (!questionComment) {
+      return left(new ResourceNotFoundError())
+    }
 
-    if (questionComment.authorId.toString() !== authorId)
+    if (questionComment.authorId.toString() !== authorId) {
       return left(new NotAllowedError())
+    }
 
     await this.questionCommentsRepository.delete(questionComment)
 
-    return right(null)
+    return right({})
   }
 }

@@ -1,12 +1,12 @@
-import { right, type Either } from '@/core/either.js'
-import type { IQuestionsRepository } from '@/domain/forum/application/repositories/question-repository.js'
-import type { Question } from '@/domain/forum/enterprise/entities/question.js'
+import { Question } from '@/domain/forum/enterprise/entities/question'
+import { QuestionsRepository } from '../repositories/questions-repository'
+import { Either, right } from '@/core/either'
 
-interface IFetchRecentQuestionsUseCaseProps {
+interface FetchRecentQuestionsUseCaseRequest {
   page: number
 }
 
-type IFetchRecentQuestionsUseCaseResponse = Either<
+type FetchRecentQuestionsUseCaseResponse = Either<
   null,
   {
     questions: Question[]
@@ -14,11 +14,11 @@ type IFetchRecentQuestionsUseCaseResponse = Either<
 >
 
 export class FetchRecentQuestionsUseCase {
-  constructor(private questionsRepository: IQuestionsRepository) {}
+  constructor(private questionsRepository: QuestionsRepository) {}
 
   async execute({
     page,
-  }: IFetchRecentQuestionsUseCaseProps): Promise<IFetchRecentQuestionsUseCaseResponse> {
+  }: FetchRecentQuestionsUseCaseRequest): Promise<FetchRecentQuestionsUseCaseResponse> {
     const questions = await this.questionsRepository.findManyRecent({ page })
 
     return right({

@@ -1,39 +1,46 @@
-import { left, right, type Either } from '@/core/either.js'
-import type { IAnswersRepository } from '@/domain/forum/application/repositories/answers-repository.js'
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error.js'
-import type { Answer } from '@/domain/forum/enterprise/entities/answer.js'
+import { Answer } from '@/domain/forum/enterprise/entities/answer'
+import { AnswersRepository } from '../repositories/answers-repository'
+import { Either, left, right } from '@/core/either'
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error'
 
-interface IEditAnswerUseCaseProps extends Pick<Answer, 'content'> {
-  answerId: string
+interface EditAnswerUseCaseRequest {
   authorId: string
+  answerId: string
+  content: string
 }
 
-type IEditAnswerUseCaseResponse = Either<
-  NotAllowedError | ResourceNotFoundError,
+type EditAnswerUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
   {
     answer: Answer
   }
 >
 
 export class EditAnswerUseCase {
-  constructor(private answersRepository: IAnswersRepository) {}
+  constructor(private answersRepository: AnswersRepository) {}
 
   async execute({
-    content,
     authorId,
     answerId,
-  }: IEditAnswerUseCaseProps): Promise<IEditAnswerUseCaseResponse> {
+    content,
+  }: EditAnswerUseCaseRequest): Promise<EditAnswerUseCaseResponse> {
     const answer = await this.answersRepository.findById(answerId)
 
-    if (!answer) return left(new ResourceNotFoundError())
-    if (answer.authorId.toString() !== authorId)
+    if (!answer) {
+      return left(new ResourceNotFoundError())
+    }
+
+    if (authorId !== answer.authorId.toString()) {
       return left(new NotAllowedError())
+    }
 
     answer.content = content
 
     await this.answersRepository.save(answer)
 
-    return right({ answer })
+    return right({
+      answer,
+    })
   }
 }

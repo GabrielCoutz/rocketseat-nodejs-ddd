@@ -1,16 +1,24 @@
-import type { Optional } from '@/core/@types/optional.js'
-import { Entity } from '@/core/entities/entity.js'
-import type { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { Optional } from '@/core/types/optional'
 
-export interface IAnswerProps {
+export interface AnswerProps {
+  authorId: UniqueEntityID
+  questionId: UniqueEntityID
   content: string
   createdAt: Date
   updatedAt?: Date
-  authorId: UniqueEntityId
-  questionId: UniqueEntityId
 }
 
-export class Answer extends Entity<IAnswerProps> {
+export class Answer extends Entity<AnswerProps> {
+  get authorId() {
+    return this.props.authorId
+  }
+
+  get questionId() {
+    return this.props.questionId
+  }
+
   get content() {
     return this.props.content
   }
@@ -23,30 +31,12 @@ export class Answer extends Entity<IAnswerProps> {
     return this.props.updatedAt
   }
 
-  get authorId() {
-    return this.props.authorId
+  get excerpt() {
+    return this.content.substring(0, 120).trimEnd().concat('...')
   }
 
-  get questionId() {
-    return this.props.questionId
-  }
-
-  static create(
-    props: Optional<IAnswerProps, 'createdAt'>,
-    id?: UniqueEntityId,
-  ) {
-    const answer = new Answer(
-      {
-        createdAt: new Date(),
-        ...props,
-      },
-      id,
-    )
-    return answer
-  }
-
-  get excerpt(): string {
-    return this.props.content.substring(0, 120).trim().concat('...')
+  private touch() {
+    this.props.updatedAt = new Date()
   }
 
   set content(content: string) {
@@ -54,7 +44,18 @@ export class Answer extends Entity<IAnswerProps> {
     this.touch()
   }
 
-  private touch() {
-    this.props.updatedAt = new Date()
+  static create(
+    props: Optional<AnswerProps, 'createdAt'>,
+    id?: UniqueEntityID,
+  ) {
+    const answer = new Answer(
+      {
+        ...props,
+        createdAt: props.createdAt ?? new Date(),
+      },
+      id,
+    )
+
+    return answer
   }
 }

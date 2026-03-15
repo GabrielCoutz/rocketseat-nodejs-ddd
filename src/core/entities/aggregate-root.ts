@@ -1,3 +1,3 @@
-import { Entity } from '@/core/entities/entity.js'
+import { Entity } from './entity'
 
-export abstract class AggregateRoot<T> extends Entity<T> {}
+export abstract class AggregateRoot<Props> extends Entity<Props> {}

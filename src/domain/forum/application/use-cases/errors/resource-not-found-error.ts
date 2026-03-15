@@ -1,7 +1,7 @@
-import type { IUseCaseError } from '@/core/errors/use-case-error.js'
+import { UseCaseError } from '@/core/errors/use-case-error'
 
-export class ResourceNotFoundError extends Error implements IUseCaseError {
+export class ResourceNotFoundError extends Error implements UseCaseError {
   constructor() {
-    super('Resource not found.')
+    super('Resource not found')
   }
 }

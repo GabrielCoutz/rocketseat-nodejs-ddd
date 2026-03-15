@@ -1,14 +1,13 @@
-import type { IAnswerCommentsRepository } from '@/domain/forum/application/repositories/answer-comments-repository.js'
-import type { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment.js'
+import { PaginationParams } from '@/core/repositories/pagination-params'
+import { AnswerCommentsRepository } from '@/domain/forum/application/repositories/answer-comments-repository'
+import { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment'
 
-export class InMemoryAnswerCommentsRepository implements IAnswerCommentsRepository {
+export class InMemoryAnswerCommentsRepository
+  implements AnswerCommentsRepository
+{
   public items: AnswerComment[] = []
 
-  async create(answerComment: AnswerComment) {
-    this.items.push(answerComment)
-  }
-
-  async findById(id: string): Promise<AnswerComment | null> {
+  async findById(id: string) {
     const answerComment = this.items.find((item) => item.id.toString() === id)
 
     if (!answerComment) {
@@ -18,27 +17,23 @@ export class InMemoryAnswerCommentsRepository implements IAnswerCommentsReposito
     return answerComment
   }
 
-  async delete(answerComment: AnswerComment): Promise<void> {
-    const answerCommentIndex = this.items.findIndex(
-      (item) => item.id.toString() === answerComment.id.toString(),
-    )
+  async findManyByAnswerId(answerId: string, { page }: PaginationParams) {
+    const answerComments = this.items
+      .filter((item) => item.answerId.toString() === answerId)
+      .slice((page - 1) * 20, page * 20)
 
-    if (answerCommentIndex) {
-      this.items.splice(answerCommentIndex, 1)
-    }
+    return answerComments
   }
 
-  async findManyByAnswerId(
-    answerId: string,
-    { page }: { page: number },
-  ): Promise<AnswerComment[]> {
-    const answerComments = this.items.filter(
-      (item) => item.answerId.toString() === answerId,
+  async create(answerComment: AnswerComment) {
+    this.items.push(answerComment)
+  }
+
+  async delete(answerComment: AnswerComment) {
+    const itemIndex = this.items.findIndex(
+      (item) => item.id === answerComment.id,
     )
 
-    const startIndex = (page - 1) * 20
-    const endIndex = page * 20
-
-    return answerComments.slice(startIndex, endIndex)
+    this.items.splice(itemIndex, 1)
   }
 }

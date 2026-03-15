@@ -1,15 +1,15 @@
-import { right, type Either } from '@/core/either.js'
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
-import type { IAnswersRepository } from '@/domain/forum/application/repositories/answers-repository.js'
-import { Answer } from '@/domain/forum/enterprise/entities/answer.js'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { Answer } from '../../enterprise/entities/answer'
+import { AnswersRepository } from '../repositories/answers-repository'
+import { Either, right } from '@/core/either'
 
-interface IAnswerQuestionUseCaseProps {
+interface AnswerQuestionUseCaseRequest {
   instructorId: string
   questionId: string
   content: string
 }
 
-type IAnswerQuestionUseCaseResponse = Either<
+type AnswerQuestionUseCaseResponse = Either<
   null,
   {
     answer: Answer
@@ -17,17 +17,17 @@ type IAnswerQuestionUseCaseResponse = Either<
 >
 
 export class AnswerQuestionUseCase {
-  constructor(private answersRepository: IAnswersRepository) {}
+  constructor(private answersRepository: AnswersRepository) {}
 
   async execute({
     instructorId,
     questionId,
     content,
-  }: IAnswerQuestionUseCaseProps): Promise<IAnswerQuestionUseCaseResponse> {
+  }: AnswerQuestionUseCaseRequest): Promise<AnswerQuestionUseCaseResponse> {
     const answer = Answer.create({
       content,
-      authorId: new UniqueEntityId(instructorId),
-      questionId: new UniqueEntityId(questionId),
+      authorId: new UniqueEntityID(instructorId),
+      questionId: new UniqueEntityID(questionId),
     })
 
     await this.answersRepository.create(answer)

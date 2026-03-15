@@ -1,13 +1,13 @@
-import { left, right, type Either } from '@/core/either.js'
-import type { IQuestionsRepository } from '@/domain/forum/application/repositories/question-repository.js'
-import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error.js'
-import type { Question } from '@/domain/forum/enterprise/entities/question.js'
+import { Question } from '@/domain/forum/enterprise/entities/question'
+import { QuestionsRepository } from '../repositories/questions-repository'
+import { Either, left, right } from '@/core/either'
+import { ResourceNotFoundError } from '@/domain/forum/application/use-cases/errors/resource-not-found-error'
 
-interface IGetQuestionBySlugUseCaseProps {
+interface GetQuestionBySlugUseCaseRequest {
   slug: string
 }
 
-type IGetQuestionBySlugUseCaseResponse = Either<
+type GetQuestionBySlugUseCaseResponse = Either<
   ResourceNotFoundError,
   {
     question: Question
@@ -15,15 +15,19 @@ type IGetQuestionBySlugUseCaseResponse = Either<
 >
 
 export class GetQuestionBySlugUseCase {
-  constructor(private questionsRepository: IQuestionsRepository) {}
+  constructor(private questionsRepository: QuestionsRepository) {}
 
   async execute({
     slug,
-  }: IGetQuestionBySlugUseCaseProps): Promise<IGetQuestionBySlugUseCaseResponse> {
+  }: GetQuestionBySlugUseCaseRequest): Promise<GetQuestionBySlugUseCaseResponse> {
     const question = await this.questionsRepository.findBySlug(slug)
 
-    if (!question) return left(new ResourceNotFoundError())
+    if (!question) {
+      return left(new ResourceNotFoundError())
+    }
 
-    return right({ question })
+    return right({
+      question,
+    })
   }
 }

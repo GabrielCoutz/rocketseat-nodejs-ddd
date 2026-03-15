@@ -1,6 +1,6 @@
-import { right, type Either } from '@/core/either.js'
-import type { IAnswerCommentsRepository } from '@/domain/forum/application/repositories/answer-comments-repository.js'
-import type { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment.js'
+import { AnswerComment } from '@/domain/forum/enterprise/entities/answer-comment'
+import { AnswerCommentsRepository } from '@/domain/forum/application/repositories/answer-comments-repository'
+import { Either, right } from '@/core/either'
 
 interface FetchAnswerCommentsUseCaseRequest {
   answerId: string
@@ -15,7 +15,7 @@ type FetchAnswerCommentsUseCaseResponse = Either<
 >
 
 export class FetchAnswerCommentsUseCase {
-  constructor(private answerCommentsRepository: IAnswerCommentsRepository) {}
+  constructor(private answerCommentsRepository: AnswerCommentsRepository) {}
 
   async execute({
     answerId,

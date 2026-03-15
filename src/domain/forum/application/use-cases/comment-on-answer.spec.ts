@@ -1,7 +1,7 @@
-import { CommentOnAnswerUseCase } from '@/domain/forum/application/use-cases/comment-on-answer.js'
-import { makeAnswer } from 'test/factories/make-answer.js'
-import { InMemoryAnswerCommentsRepository } from 'test/repositories/in-memory-answer-comments-repository.js'
-import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository.js'
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { makeAnswer } from 'test/factories/make-answer'
+import { InMemoryAnswerCommentsRepository } from 'test/repositories/in-memory-answer-comments-repository'
+import { CommentOnAnswerUseCase } from '@/domain/forum/application/use-cases/comment-on-answer'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository
@@ -29,8 +29,7 @@ describe('Comment on Answer', () => {
       content: 'Comentário teste',
     })
 
-    expect(inMemoryAnswerCommentsRepository.items).toHaveLength(1)
-    expect(inMemoryAnswerCommentsRepository.items[0]!.content).toEqual(
+    expect(inMemoryAnswerCommentsRepository.items[0].content).toEqual(
       'Comentário teste',
     )
   })

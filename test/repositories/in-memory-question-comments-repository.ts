@@ -1,14 +1,13 @@
-import type { IQuestionCommentsRepository } from '@/domain/forum/application/repositories/question-comments-repository.js'
-import type { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment.js'
+import { PaginationParams } from '@/core/repositories/pagination-params'
+import { QuestionCommentsRepository } from '@/domain/forum/application/repositories/question-comments-repository'
+import { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment'
 
-export class InMemoryQuestionCommentsRepository implements IQuestionCommentsRepository {
+export class InMemoryQuestionCommentsRepository
+  implements QuestionCommentsRepository
+{
   public items: QuestionComment[] = []
 
-  async create(questionComment: QuestionComment): Promise<void> {
-    this.items.push(questionComment)
-  }
-
-  async findById(id: string): Promise<QuestionComment | null> {
+  async findById(id: string) {
     const questionComment = this.items.find((item) => item.id.toString() === id)
 
     if (!questionComment) {
@@ -18,23 +17,23 @@ export class InMemoryQuestionCommentsRepository implements IQuestionCommentsRepo
     return questionComment
   }
 
-  async delete(questionComment: QuestionComment): Promise<void> {
-    const index = this.items.findIndex((item) => item.id === questionComment.id)
+  async findManyByQuestionId(questionId: string, { page }: PaginationParams) {
+    const questionComments = this.items
+      .filter((item) => item.questionId.toString() === questionId)
+      .slice((page - 1) * 20, page * 20)
 
-    if (index) {
-      this.items.splice(index, 1)
-    }
+    return questionComments
   }
 
-  async findManyByQuestionId(
-    questionId: string,
-    params: { page: number },
-  ): Promise<QuestionComment[]> {
-    const start = (params.page - 1) * 20
-    const end = params.page * 20
+  async create(questionComment: QuestionComment) {
+    this.items.push(questionComment)
+  }
 
-    return this.items
-      .filter((item) => item.questionId.toString() === questionId)
-      .slice(start, end)
+  async delete(questionComment: QuestionComment) {
+    const itemIndex = this.items.findIndex(
+      (item) => item.id === questionComment.id,
+    )
+
+    this.items.splice(itemIndex, 1)
   }
 }

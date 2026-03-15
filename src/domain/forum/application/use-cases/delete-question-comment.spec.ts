@@ -1,8 +1,8 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
-import { DeleteQuestionCommentUseCase } from '@/domain/forum/application/use-cases/delete-question-comment.js'
-import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error.js'
-import { makeQuestionComment } from 'test/factories/make-question-comment.js'
-import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository.js'
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository'
+import { DeleteQuestionCommentUseCase } from '@/domain/forum/application/use-cases/delete-question-comment'
+import { makeQuestionComment } from 'test/factories/make-question-comment'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from '@/domain/forum/application/use-cases/errors/not-allowed-error'
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 let sut: DeleteQuestionCommentUseCase
@@ -30,7 +30,7 @@ describe('Delete Question Comment', () => {
 
   it('should not be able to delete another user question comment', async () => {
     const questionComment = makeQuestionComment({
-      authorId: new UniqueEntityId('author-1'),
+      authorId: new UniqueEntityID('author-1'),
     })
 
     await inMemoryQuestionCommentsRepository.create(questionComment)
