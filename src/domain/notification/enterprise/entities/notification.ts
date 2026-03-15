@@ -45,4 +45,8 @@ export class Notification extends Entity<INotificationProps> {
 
     return notification
   }
+
+  read() {
+    this.props.readAt = new Date()
+  }
 }
